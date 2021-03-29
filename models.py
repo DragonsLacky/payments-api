@@ -1,13 +1,14 @@
 from app import db
 from werkzeug.security import generate_password_hash, check_password_hash
+import enum
 
 
-class MethodType(db.Enum):
+class MethodType(enum.Enum):
     paypal = 1
     card = 2
 
 
-class CardType(db.Enum):
+class CardType(enum.Enum):
     master = 1
     visa = 2
 
@@ -22,7 +23,7 @@ class UserPayments(db.Model):
 class PaymentMethods(db.Model):
     __tablename__ = 'payment_methods'
     id = db.Column(db.String, primary_key=True)
-    method_type = db.Column(db.Enum(MethodType), nullable=False)
+    type = db.Column(db.Enum(MethodType), nullable=False)
     user_id = db.Column(db.String, db.ForeignKey('user_payments.id'), nullable=False)
 
     __mapper_args__ = {
@@ -50,3 +51,13 @@ class PayPal(PaymentMethods):
 
     def check_password(self, password):
         return check_password_hash(self.password, password)
+
+
+class Transaction(db.Model):
+    __tablename__ = "transactions"
+    id = db.Column(db.Integer, primary_key=True)
+    amount = db.Column(db.Float, nullable=False)
+    date = db.Column(db.DateTime)
+    completed = db.Column(db.Boolean)
+    user_id = db.Column(db.String, nullable=False)
+    user = db.relationship('UserPayments', db.backref('transactions'))
