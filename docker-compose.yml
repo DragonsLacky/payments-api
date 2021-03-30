@@ -1,0 +1,9 @@
+version: '3.9'
+
+services:
+  payments-api:
+    image: payments:0.0.1
+    container_name: payments-service
+    ports:
+      - "5005:5000"
+    

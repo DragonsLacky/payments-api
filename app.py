@@ -1,13 +1,13 @@
 import connexion
 from flask_migrate import Migrate
 from flask_sqlalchemy import SQLAlchemy
-
+import os
 
 def hello_world(name: str) -> str:
     return 'Hello World! {name}'.format(name=name)
 
 
-connexion_app = connexion.App(__name__, specification_dir="config/")
+connexion_app = connexion.App(__name__, specification_dir="./config/")
 app = connexion_app.app
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///app.db'
 db = SQLAlchemy(app)
@@ -18,3 +18,4 @@ from models import PaymentMethods, UserPayments, Transaction, PayPal, CreditCard
 
 if __name__ == '__main__':
     connexion_app.run(port=5000, debug=True)
+    
