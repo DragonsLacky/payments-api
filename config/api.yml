@@ -9,6 +9,100 @@ produces:
   - application/json
 basePath: "/api"
 paths:
+  /users-payments-methods:
+    post:
+      tags: [ UserPayments ]
+      operationId: app.saveUserPaymentMethod
+      summary: add new payment method for user
+      parameters:
+        - $ref: '#/parameters/p_body'
+      responses:
+        200:
+          description: Return user payment
+        409:
+          description: Already exist
+        404:
+          description: Does not exist
+    get:
+      tags: [UserPayments]
+      operationId: app.findAllUsersPaymentsMethods
+      summary: list all payments methods
+      responses:
+        200:
+          description: Return all user payments methods
+        404:
+          description: Does not exist
+  /users-payments-methods/{user_id}:
+    get:
+      tags: [UserPayments]
+      operationId: app.findUserPaymentMethodById
+      summary: find payment method by user id
+      parameters:
+        - $ref: '#/parameters/user_id'
+      responses:
+        200:
+          description: Return user Payment Method
+        404:
+          description: Does not exist
+    delete:
+      tags: [UserPayments]
+      operationId: app.deleteUserPaymentMethodById
+      summary: delete user payment method
+      parameters:
+        - $ref: '#/parameters/user_id'
+      responses:
+        200:
+          description: Return deleted User Payment Method
+        404:
+          description: Does not exist
+
+  /transactions:
+    get:
+      tags: [ Transaction ]
+      operationId: app.findAllTransactions
+      summary: Get all Transactions
+      responses:
+        200:
+          description: return transactions
+        404:
+          description: Does not exist
+    post:
+      tags: [Transaction]
+      operationId: app.saveTransaction
+      summary: save new Transactions
+      parameters:
+        - $ref: '#/parameters/t_body'
+      responses:
+        200:
+          description: return status
+        409:
+          description: Already exist
+  /transactions/{user_id}:
+    get:
+      tags: [Transaction]
+      operationId: app.findTransactionsByUserID
+      summary: Get All transactions from user id
+      parameters:
+        - $ref: '#/parameters/user_id'
+      responses:
+        200:
+          description: return transactions
+        404:
+          description: Does not exist
+  /transactions/edit/{id}:
+    put:
+      tags: [Transaction]
+      operationId: app.editTransaction
+      summary: Edit transaction
+      parameters:
+        - $ref: '#/parameters/id'
+        - $ref: '#/parameters/transaction_body'
+      responses:
+        200:
+          description: Return transaction object
+        404:
+          description: Transaction does not exist
+
   /hello/{name}:
     post:
       operationId: app.hello_world
@@ -23,6 +117,96 @@ paths:
             type: string
             description: Name of the person to greet.
             required: true
+parameters:
+  user_id:
+    name: user_id
+    description: User unique identification
+    in: path
+    type: string
+    required: true
+
+
+  id:
+    name: id
+    description: Transaction unique identification
+    in: path
+    type: string
+    required: true
+
+
+
+
+  transaction_body:
+    name: transaction_body
+    description: Transaction details for update
+    in: body
+    schema:
+      required:
+        - user_id
+      properties:
+        user_id:
+          type: string
+  t_body:
+    name: transaction_body
+    description: Save new Transaction into database
+    in: body
+    schema:
+      required:
+        - id
+        - user_id
+      properties:
+        id:
+          type: string
+        user_id:
+          type: string
+  p_body:
+    name: payment_method
+    description: Save new Payment Methods into database
+    in: body
+    schema:
+      required:
+        - id
+        - user_id
+      properties:
+        id:
+          type: string
+        user_id:
+          type: string
+
+#definitions:
+#  Transaction:
+#    type: object
+#    required:
+#      - id
+#      - amount
+#      - user_id
+#    propertios:
+#      id:
+#        type: string
+#        description: Unique identifier
+#        example: "123"
+#        readOnly: true
+#      amount:
+#        type: float
+#        description: Amount of the transaction
+#        example: 123.5
+#      date:
+#        type: string
+#        format: date-time
+#        description: Date od transaction
+#        example: "2021-11-05T14:32:41.230+02:00"
+#        readOnly: true
+#      completed:
+#        type: boolean
+#        description: Is the transaction completed
+#        example: true
+#        readOnly: true
+#      user_id:
+#        type: string
+#        description: The user id to which belong the transaction
+#        example: "12345"
+#        readOnly: true
+
 #  /test1/{test1_id}:
 #    get:
 #      tags: [ Test1 ]
