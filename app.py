@@ -2,7 +2,12 @@ import connexion
 from flask_migrate import Migrate
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
+from flask import jsonify
+import stripe
 import os
+
+
+
 
 def hello_world(name: str) -> str:
     return 'Hello World! {name}'.format(name=name)
@@ -34,6 +39,25 @@ def saveTransaction(transaction_body):
     transaction = Transaction(id=transaction_body['id'],date=datetime.now(),amount=transaction_body['amount'],user_id=transaction_body['user_id'])
     db.session.add(transaction)
     db.session.commit()
+
+def transaction_details(transaction_id):
+    transaction = db.session.query(Transaction).filter_by(id=transaction_id).first()
+    if transaction:
+        return transaction
+    else:
+        return {'error not found'},404
+def cart_payment_status(transaction_id):
+    transaction = db.session.query(Transaction).filter_by(id=transaction_id).first()
+    if transaction:
+        return transaction.completed
+    else:
+        return {'error not found'},404
+def rent_payment_status(transaction_id):
+    transaction = db.session.query(Transaction).filter_by(id=transaction_id).first()
+    if transaction:
+        return transaction.completed
+    else:
+        return {'error not found'},404
 def saveUserPaymentMethod(user_payment_method):
     payment_method=db.session.query.filter_by(id=user_payment_method['payment_method_id']).first()
     if payment_method:
@@ -66,6 +90,7 @@ def deleteUserPaymentMethodById(id):
 
 
 
+
 connexion_app = connexion.App(__name__, specification_dir="./config/")
 app = connexion_app.app
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///app.db'
@@ -74,7 +99,6 @@ migrate = Migrate(app, db)
 connexion_app.add_api("api.yml")
 
 from models import PaymentMethods, UserPayments, Transaction, PayPal, CreditCards
-
 if __name__ == '__main__':
     connexion_app.run(port=5000, debug=True)
     

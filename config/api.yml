@@ -89,6 +89,42 @@ paths:
           description: return transactions
         404:
           description: Does not exist
+  /transactions/{id}:
+    get:
+      tags: [ Transaction ]
+      operationId: app.transaction_details
+      summary: return Transaction details exported function
+      parameters:
+        - $ref: '#/parameters/id'
+      responses:
+        200:
+          description: return transaction object
+        404:
+          description: Does not exist
+  /transactions/cart_payment_status/{id}:
+    get:
+      tags: [Transaction]
+      operationId: app.cart_payment_status
+      summary: returs is the Transaction for buying products is completed exported function
+      parameters:
+        - $ref : '#/parameters/id'
+      responses:
+        200:
+          description: return true of false
+        404:
+          description: does not exist
+  /transactions/rent_payment_status/{id}:
+    get:
+      tags: [Transaction]
+      operationId: app.rent_payment_status
+      summary: returs is the Transaction for rented products completed exported function
+      parameters:
+        - $ref: '#/parameters/id'
+      responses:
+        200:
+          description: return true of false
+        404:
+          description: does not exist
   /transactions/edit/{id}:
     put:
       tags: [Transaction]
@@ -102,6 +138,7 @@ paths:
           description: Return transaction object
         404:
           description: Transaction does not exist
+
 
   /hello/{name}:
     post:
@@ -130,7 +167,7 @@ parameters:
     name: id
     description: Transaction unique identification
     in: path
-    type: string
+    type: number
     required: true
 
 
@@ -146,6 +183,12 @@ parameters:
       properties:
         user_id:
           type: string
+        amount:
+          type: number
+        completed:
+          type: boolean
+        date:
+          type: object
   t_body:
     name: transaction_body
     description: Save new Transaction into database
@@ -156,9 +199,15 @@ parameters:
         - user_id
       properties:
         id:
-          type: string
+          type: number
         user_id:
           type: string
+        amount:
+          type: number
+        completed:
+          type: boolean
+        date:
+          type: object
   p_body:
     name: payment_method
     description: Save new Payment Methods into database
