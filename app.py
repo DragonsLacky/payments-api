@@ -36,10 +36,13 @@ def transaction_details(transaction_id):
 def edit_transaction(transaction_id, transaction_body):
     transaction = Transaction.query.filter_by(id=transaction_id).first()
     if transaction:
-        transaction.completed = transaction_body['completed']
+        transaction.user_id = transaction_body['user_id']
+        transaction.amount= transaction_body['amount']
+        transaction.completed= transaction_body['completed']
+        transaction.date=datetime.now()
         db.session.add(transaction)
         db.session.commit()
-        return transaction_to_json(transaction), 200
+        return transaction
     else:
         return {'message': 'error not found'}, 404
 
@@ -124,6 +127,44 @@ def delete_user_payment_method(method_id):
         return {'message': 'error not found'}, 404
 
 
+def rent_pay(amount):
+    jwt_token = connexion.request.headers['Authorization']
+    #TODO decode jwt_token and check if the user is autthorizated
+    # TODO call discounts ms for final amount
+    decoded_jwt = {'user_id': '123'}
+    user_id = decoded_jwt['user_id']
+    if pay():
+        transaction = Transaction(date=datetime.now(),
+                                  amount=amount,
+                                  user=UserPayments.query.filter_by(id=user_id).first(),
+                                  completed=True)
+        db.session.add(transaction)
+        db.session.commit()
+        return transaction_to_json(transaction), 200
+    return {'message': 'pay was not successful'}, 400
+
+
+def parking_pay(amount):
+    jwt_token = connexion.request.headers['Authorization']
+    #TODO decode jwt_token and check if the user is autthorizated
+    # TODO call discounts ms for final amount
+    decoded_jwt={'user_id': '123'}
+    user_id=decoded_jwt['user_id']
+    if pay():
+        transaction = Transaction(date=datetime.now(),
+                                  amount=amount,
+                                  user=UserPayments.query.filter_by(id=user_id).first(),
+                                  completed=True)
+        db.session.add(transaction)
+        db.session.commit()
+        return transaction_to_json(transaction), 200
+    return {'message': 'pay was not successful'}, 400
+
+
+def pay():
+    return True
+
+
 connexion_app = connexion.App(__name__, specification_dir="./config/")
 app = connexion_app.app
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///app.db'
@@ -131,7 +172,9 @@ db = SQLAlchemy(app)
 migrate = Migrate(app, db)
 connexion_app.add_api("api.yml")
 
+
 from models import PaymentMethods, UserPayments, Transaction, PayPal, CreditCards, MethodType, CardType
+
 
 if __name__ == '__main__':
     # pp = PayPal(email="name@gmail.com", user_id=0)
