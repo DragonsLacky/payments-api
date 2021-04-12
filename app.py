@@ -129,8 +129,8 @@ def delete_user_payment_method(method_id):
 
 def cart_pay(amount):
     # jwt_token = connexion.request.headers['Authorization']
-    # #TODO decode jwt_token and check if the user is autthorizated
-    # #TODO call discounts ms for final amount
+    # TODO decode jwt_token and check if the user is autthorizated
+    # TODO call discounts ms for final amount
     # decoded_jwt = {'user_id':'123'}
     # user_id = decoded_jwt['user_id']
     user_id = 0
@@ -146,11 +146,11 @@ def cart_pay(amount):
 
 
 def rent_pay(amount):
-    jwt_token = connexion.request.headers['Authorization']
-    #TODO decode jwt_token and check if the user is autthorizated
+    # jwt_token = connexion.request.headers['Authorization']
+    # TODO decode jwt_token and check if the user is autthorizated
     # TODO call discounts ms for final amount
-    decoded_jwt = {'user_id': '123'}
-    user_id = decoded_jwt['user_id']
+    # decoded_jwt = {'user_id': '123'}
+    user_id = 0
     if pay():
         transaction = Transaction(date=datetime.now(),
                                   amount=amount['amount'],
@@ -163,11 +163,12 @@ def rent_pay(amount):
 
 
 def parking_pay(amount):
-    jwt_token = connexion.request.headers['Authorization']
-    #TODO decode jwt_token and check if the user is autthorizated
+    # jwt_token = connexion.request.headers['Authorization']
+    # TODO decode jwt_token and check if the user is autthorizated
     # TODO call discounts ms for final amount
-    decoded_jwt={'user_id': '123'}
-    user_id=decoded_jwt['user_id']
+    # decoded_jwt={'user_id': '123'}
+    # user_id=decoded_jwt['user_id']
+    user_id = 0
     if pay():
         transaction = Transaction(date=datetime.now(),
                                   amount=amount['amount'],
