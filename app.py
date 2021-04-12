@@ -11,18 +11,24 @@ import os
 
 def hello_world(name: str) -> str:
     return 'Hello World! {name}'.format(name=name)
+
+
 def findAllTransactions():
     transactions = db.session.query(Transaction)
     if transactions:
         return transactions
     else:
         return {'error'},404
+
+
 def findTransactionsByUserID(user_id):
     transaction = db.session.query(Transaction).filter_by(user_id=user_id).first()
     if transaction:
        return transaction
     else:
         return {'error' : '{} not found'.format(user_id)},404
+
+
 def editTransaction(id,transaction_body):
     transaction = db.session.query(Transaction).filter_by(id=id).first()
     if transaction:
@@ -35,10 +41,14 @@ def editTransaction(id,transaction_body):
         return transaction
     else:
         return {'error not found'},404
+
+
 def saveTransaction(transaction_body):
-    transaction = Transaction(id=transaction_body['id'],date=datetime.now(),amount=transaction_body['amount'],user_id=transaction_body['user_id'])
+    transaction = Transaction(date=datetime.now(),amount=transaction_body['amount'],user_id=transaction_body['user_id'],completed=True)
     db.session.add(transaction)
     db.session.commit()
+
+
 
 def transaction_details(transaction_id):
     transaction = db.session.query(Transaction).filter_by(id=transaction_id).first()
@@ -46,18 +56,24 @@ def transaction_details(transaction_id):
         return transaction
     else:
         return {'error not found'},404
+
+
 def cart_payment_status(transaction_id):
     transaction = db.session.query(Transaction).filter_by(id=transaction_id).first()
     if transaction:
         return transaction.completed
     else:
         return {'error not found'},404
+
+
 def rent_payment_status(transaction_id):
     transaction = db.session.query(Transaction).filter_by(id=transaction_id).first()
     if transaction:
         return transaction.completed
     else:
         return {'error not found'},404
+
+
 def saveUserPaymentMethod(user_payment_method):
     payment_method=db.session.query.filter_by(id=user_payment_method['payment_method_id']).first()
     if payment_method:
@@ -67,18 +83,23 @@ def saveUserPaymentMethod(user_payment_method):
         return user
     else:
         return {'error not found'},404
+
+
 def findAllUsersPaymentsMethods():
     paymentMethods = db.session.query(UserPayments)
     if paymentMethods:
         return paymentMethods
     else:
         return {'error not found'},404
+
+
 def findUserPaymentMethodById(id):
     payment_method = db.session.query(UserPayments).filter_by(id=id).first()
     if payment_method:
         return payment_method
     else:
         return {'error not found'},404
+
 def deleteUserPaymentMethodById(id):
     payment_method = db.session.query(UserPayments).filter_by(id=id).first()
     if payment_method:
@@ -88,7 +109,44 @@ def deleteUserPaymentMethodById(id):
     else:
         return {'error not found'},404
 
+def cart_pay(amount):
+    jwt_token = connexion.request.headers['Authorization']
+    #TODO decode jwt_token and check if the user is autthorizated
+    #TODO call discounts ms for final amount
+    decoded_jwt={'user_id':'123'}
+    user_id=decoded_jwt['user_id']
+    if pay():
+        transaction = Transaction(user_id=user_id,amount=amount,completed=True,date=datetime.now())
+        return transaction.id
+    return {'pay was not succesful'},400
 
+def rent_pay(amount):
+    jwt_token = connexion.request.headers['Authorization']
+    #TODO decode jwt_token and check if the user is autthorizated
+    # TODO call discounts ms for final amount
+    decoded_jwt={'user_id':'123'}
+    user_id=decoded_jwt['user_id']
+    if pay():
+        transaction = Transaction(user_id=user_id,amount=amount,completed=True,date=datetime.now())
+        return transaction.id
+    return {'pay was not succesful'},400
+
+
+
+def parking_pay(amount):
+    jwt_token = connexion.request.headers['Authorization']
+    #TODO decode jwt_token and check if the user is autthorizated
+    # TODO call discounts ms for final amount
+    decoded_jwt={'user_id':'123'}
+    user_id=decoded_jwt['user_id']
+    if pay():
+        transaction = Transaction(user_id=user_id,amount=amount,completed=True,date=datetime.now())
+        return transaction.id
+    return {'pay was not succesful'},400
+
+
+def pay():
+    return True
 
 
 connexion_app = connexion.App(__name__, specification_dir="./config/")
