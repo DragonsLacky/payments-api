@@ -127,6 +127,23 @@ def delete_user_payment_method(method_id):
         return {'message': 'error not found'}, 404
 
 
+def cart_pay(amount):
+    jwt_token = connexion.request.headers['Authorization']
+    #TODO decode jwt_token and check if the user is autthorizated
+    #TODO call discounts ms for final amount
+    decoded_jwt = {'user_id':'123'}
+    user_id = decoded_jwt['user_id']
+    if pay():
+        transaction = Transaction(date=datetime.now(),
+                                  amount=amount,
+                                  user=UserPayments.query.filter_by(id=user_id).first(),
+                                  completed=True)
+        db.session.add(transaction)
+        db.session.commit()
+        return transaction_to_json(transaction), 200
+    return {'message': 'pay was not successful'}, 400
+
+
 def rent_pay(amount):
     jwt_token = connexion.request.headers['Authorization']
     #TODO decode jwt_token and check if the user is autthorizated
@@ -189,6 +206,6 @@ if __name__ == '__main__':
     # db.session.add(cc)
     # db.session.add(pp)
     # db.session.commit()
-    pms = PaymentMethods.query.filter_by(user_id=0).all()
-    print(pms)
+    # pms = PaymentMethods.query.filter_by(user_id=0).all()
+    # print(pms)
     connexion_app.run(port=5000, debug=True)

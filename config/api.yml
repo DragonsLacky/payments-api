@@ -201,6 +201,10 @@ parameters:
     required: true
   transaction_id:
     name: transaction_id
+    description: Transaction unique identification
+    in: path
+    type: integer
+    required: true
   amount_body:
     name: transaction_amount
     description: amount for paying
@@ -239,7 +243,6 @@ parameters:
     in: body
     schema:
       required:
-        - id
         - user_id
       properties:
         user_id:
