@@ -128,14 +128,15 @@ def delete_user_payment_method(method_id):
 
 
 def cart_pay(amount):
-    jwt_token = connexion.request.headers['Authorization']
-    #TODO decode jwt_token and check if the user is autthorizated
-    #TODO call discounts ms for final amount
-    decoded_jwt = {'user_id':'123'}
-    user_id = decoded_jwt['user_id']
+    # jwt_token = connexion.request.headers['Authorization']
+    # #TODO decode jwt_token and check if the user is autthorizated
+    # #TODO call discounts ms for final amount
+    # decoded_jwt = {'user_id':'123'}
+    # user_id = decoded_jwt['user_id']
+    user_id = 0
     if pay():
         transaction = Transaction(date=datetime.now(),
-                                  amount=amount,
+                                  amount=amount['amount'],
                                   user=UserPayments.query.filter_by(id=user_id).first(),
                                   completed=True)
         db.session.add(transaction)
@@ -152,7 +153,7 @@ def rent_pay(amount):
     user_id = decoded_jwt['user_id']
     if pay():
         transaction = Transaction(date=datetime.now(),
-                                  amount=amount,
+                                  amount=amount['amount'],
                                   user=UserPayments.query.filter_by(id=user_id).first(),
                                   completed=True)
         db.session.add(transaction)
@@ -169,7 +170,7 @@ def parking_pay(amount):
     user_id=decoded_jwt['user_id']
     if pay():
         transaction = Transaction(date=datetime.now(),
-                                  amount=amount,
+                                  amount=amount['amount'],
                                   user=UserPayments.query.filter_by(id=user_id).first(),
                                   completed=True)
         db.session.add(transaction)

@@ -206,7 +206,7 @@ parameters:
     type: integer
     required: true
   amount_body:
-    name: transaction_amount
+    name: amount
     description: amount for paying
     in: body
     schema:
