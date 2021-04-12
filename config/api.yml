@@ -9,57 +9,10 @@ produces:
   - application/json
 basePath: "/api"
 paths:
-  /users-payments-methods:
-    post:
-      tags: [ UserPayments ]
-      operationId: app.saveUserPaymentMethod
-      summary: add new payment method for user
-      parameters:
-        - $ref: '#/parameters/p_body'
-      responses:
-        200:
-          description: Return user payment
-        409:
-          description: Already exist
-        404:
-          description: Does not exist
-    get:
-      tags: [UserPayments]
-      operationId: app.findAllUsersPaymentsMethods
-      summary: list all payments methods
-      responses:
-        200:
-          description: Return all user payments methods
-        404:
-          description: Does not exist
-  /users-payments-methods/{user_id}:
-    get:
-      tags: [UserPayments]
-      operationId: app.findUserPaymentMethodById
-      summary: find payment method by user id
-      parameters:
-        - $ref: '#/parameters/user_id'
-      responses:
-        200:
-          description: Return user Payment Method
-        404:
-          description: Does not exist
-    delete:
-      tags: [UserPayments]
-      operationId: app.deleteUserPaymentMethodById
-      summary: delete user payment method
-      parameters:
-        - $ref: '#/parameters/user_id'
-      responses:
-        200:
-          description: Return deleted User Payment Method
-        404:
-          description: Does not exist
-
   /transactions:
     get:
       tags: [ Transaction ]
-      operationId: app.findAllTransactions
+      operationId: app.find_all_transactions
       summary: Get all Transactions
       responses:
         200:
@@ -67,8 +20,8 @@ paths:
         404:
           description: Does not exist
     post:
-      tags: [Transaction]
-      operationId: app.saveTransaction
+      tags: [ Transaction ]
+      operationId: app.save_transaction
       summary: save new Transactions
       parameters:
         - $ref: '#/parameters/t_body'
@@ -77,10 +30,10 @@ paths:
           description: return status
         409:
           description: Already exist
-  /transactions/{user_id}:
+  /transactions/user/{user_id}:
     get:
-      tags: [Transaction]
-      operationId: app.findTransactionsByUserID
+      tags: [ Transaction ]
+      operationId: app.find_user_transactions
       summary: Get All transactions from user id
       parameters:
         - $ref: '#/parameters/user_id'
@@ -89,57 +42,106 @@ paths:
           description: return transactions
         404:
           description: Does not exist
-  /transactions/{id}:
+  /transactions/{transaction_id}:
     get:
       tags: [ Transaction ]
       operationId: app.transaction_details
       summary: return Transaction details exported function
       parameters:
-        - $ref: '#/parameters/id'
+        - $ref: '#/parameters/transaction_id'
       responses:
         200:
           description: return transaction object
         404:
           description: Does not exist
-  /transactions/cart_payment_status/{id}:
-    get:
-      tags: [Transaction]
-      operationId: app.cart_payment_status
-      summary: returs is the Transaction for buying products is completed exported function
-      parameters:
-        - $ref : '#/parameters/id'
-      responses:
-        200:
-          description: return true of false
-        404:
-          description: does not exist
-  /transactions/rent_payment_status/{id}:
-    get:
-      tags: [Transaction]
-      operationId: app.rent_payment_status
-      summary: returs is the Transaction for rented products completed exported function
-      parameters:
-        - $ref: '#/parameters/id'
-      responses:
-        200:
-          description: return true of false
-        404:
-          description: does not exist
-  /transactions/edit/{id}:
+  /transactions/edit/{transaction_id}:
     put:
-      tags: [Transaction]
-      operationId: app.editTransaction
+      tags: [ Transaction ]
+      operationId: app.edit_transaction
       summary: Edit transaction
       parameters:
-        - $ref: '#/parameters/id'
+        - $ref: '#/parameters/transaction_id'
         - $ref: '#/parameters/transaction_body'
       responses:
         200:
           description: Return transaction object
         404:
           description: Transaction does not exist
+  /transactions/cart_payment_status/{transaction_id}:
+    get:
+      tags: [ Transaction ]
+      operationId: app.cart_payment_status
+      summary: returs is the Transaction for buying products is completed exported function
+      parameters:
+        - $ref: '#/parameters/transaction_id'
+      responses:
+        200:
+          description: return true of false
+        404:
+          description: does not exist
+  /transactions/rent_payment_status/{transaction_id}:
+    get:
+      tags: [ Transaction ]
+      operationId: app.rent_payment_status
+      summary: returs is the Transaction for rented products completed exported function
+      parameters:
+        - $ref: '#/parameters/transaction_id'
+      responses:
+        200:
+          description: return true of false
+        404:
+          description: does not exist
 
+  /user-payment-methods/user/{user_id}:
+    get:
+      tags: [ UserPayments ]
+      operationId: app.find_all_user_payment_methods
+      summary: list all payments methods
+      parameters:
+        - $ref: '#/parameters/user_id'
+      responses:
+        200:
+          description: Return all user payments methods
+        404:
+          description: Does not exist
+    post:
+      tags: [ UserPayments ]
+      operationId: app.save_user_payment_method
+      summary: add new payment method for user
+      parameters:
+        - $ref: '#/parameters/p_body'
+        - $ref: '#/parameters/user_id'
+      responses:
+        200:
+          description: Return user payment
+        409:
+          description: Already exist
+        404:
+          description: Does not exist
 
+  /user-payment-method/{method_id}:
+    get:
+      tags: [UserPayments]
+      operationId: app.find_user_payment_method_by_id
+      summary: find payment method by user id
+      parameters:
+        - $ref: '#/parameters/method_id'
+      responses:
+        200:
+          description: Return user Payment Method
+        404:
+          description: Does not exist
+    delete:
+      tags: [UserPayments]
+      operationId: app.delete_user_payment_method
+      summary: delete user payment method
+      parameters:
+        - $ref: '#/parameters/method_id'
+      responses:
+        200:
+          description: Return deleted User Payment Method
+        404:
+          description: Does not exist
   /hello/{name}:
     post:
       operationId: app.hello_world
@@ -159,20 +161,20 @@ parameters:
     name: user_id
     description: User unique identification
     in: path
-    type: string
+    type: integer
     required: true
-
-
-  id:
-    name: id
+  transaction_id:
+    name: transaction_id
     description: Transaction unique identification
     in: path
-    type: number
+    type: integer
     required: true
-
-
-
-
+  method_id:
+    name: method_id
+    description: Method unique identifier
+    in: path
+    type: integer
+    required: true
   transaction_body:
     name: transaction_body
     description: Transaction details for update
@@ -182,139 +184,39 @@ parameters:
         - user_id
       properties:
         user_id:
-          type: string
+          type: integer
         amount:
           type: number
         completed:
           type: boolean
         date:
-          type: object
+          type: string
   t_body:
     name: transaction_body
     description: Save new Transaction into database
     in: body
     schema:
       required:
-        - id
         - user_id
       properties:
-        id:
-          type: number
         user_id:
-          type: string
+          type: integer
         amount:
           type: number
         completed:
           type: boolean
-        date:
-          type: object
   p_body:
-    name: payment_method
+    name: user_payment_method
     description: Save new Payment Methods into database
     in: body
     schema:
       required:
-        - id
         - user_id
       properties:
-        id:
+        type:
           type: string
         user_id:
-          type: string
+          type: integer
+        method:
+          type: object
 
-#definitions:
-#  Transaction:
-#    type: object
-#    required:
-#      - id
-#      - amount
-#      - user_id
-#    propertios:
-#      id:
-#        type: string
-#        description: Unique identifier
-#        example: "123"
-#        readOnly: true
-#      amount:
-#        type: float
-#        description: Amount of the transaction
-#        example: 123.5
-#      date:
-#        type: string
-#        format: date-time
-#        description: Date od transaction
-#        example: "2021-11-05T14:32:41.230+02:00"
-#        readOnly: true
-#      completed:
-#        type: boolean
-#        description: Is the transaction completed
-#        example: true
-#        readOnly: true
-#      user_id:
-#        type: string
-#        description: The user id to which belong the transaction
-#        example: "12345"
-#        readOnly: true
-
-#  /test1/{test1_id}:
-#    get:
-#      tags: [ Test1 ]
-#      operationId: app.hello_world
-#      summary: Testing endpoint
-#      parameters:
-#        - $ref: '#/parameters/test1_id'
-#      responses:
-#        200:
-#          description: Return test1
-#        404:
-#          description: Does not exist
-#  /person/:
-#    post:
-#      tags: [ Person ]
-#      operationId: app.person_add
-#      parameters:
-#        - $ref: '#/parameters/person_body'
-#      responses:
-#        200:
-#          description: Return status
-#        409:
-#          description: Already exists
-#    /person/{person_name}:
-#      get:
-#        tags: [ Person ]
-#        operationId: app.person_find
-#        parameters:
-#          - $ref: '#/parameters/person_name'
-#        responses:
-#          200:
-#            description: Return person object
-#          404:
-#            description: Person not found
-#parameters:
-#  test1_id:
-#    name: test1_id
-#    description: Test1 unique id
-#    in: path
-#    type: string
-#    required: true
-#    pattern: "^[a-zA-Z0-9-]+$"
-#
-#  person_body:
-#    name: person_body
-#    description: Test1 unique id
-#    in: body
-#    schema:
-#      required:
-#        - name
-#      properties:
-#        name:
-#          type: string
-#        surname:
-#          type: string
-#
-#  person_name:
-#    name: person_name
-#    description: The name of the person we're looking for
-#    in: path
-#    required: true
-#    type: string

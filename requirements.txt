@@ -5,3 +5,4 @@ sqlalchemy~=1.4.3
 Werkzeug~=1.0.1
 alembic~=1.5.8
 stripe>=2.48.0,<3.0
+marshmallow~=3.11.1
