@@ -11,6 +11,7 @@ def hello_world(name: str) -> str:
 
 def find_all_transactions():
     transactions = Transaction.query.all()
+    print (len(transactions))
     if transactions:
         return transactions_to_json_array(transactions), 200
     else:
@@ -28,7 +29,7 @@ def find_user_transactions(user_id):
 def transaction_details(transaction_id):
     transaction = Transaction.query.filter_by(id=transaction_id).first()
     if transaction:
-        return transaction_to_json(transaction)
+        return transaction_to_json(transaction), 200
     else:
         return {'message': 'error not found'}, 404
 
@@ -42,7 +43,7 @@ def edit_transaction(transaction_id, transaction_body):
         transaction.date=datetime.now()
         db.session.add(transaction)
         db.session.commit()
-        return transaction
+        return transaction_to_json(transaction), 200
     else:
         return {'message': 'error not found'}, 404
 
@@ -54,6 +55,8 @@ def save_transaction(transaction_body):
                               completed=transaction_body['completed'])
     db.session.add(transaction)
     db.session.commit()
+
+    return transaction_to_json(transaction), 200
 
 
 def cart_payment_status(transaction_id):
@@ -85,9 +88,9 @@ def save_user_payment_method(user_id, user_payment_method):
     if not user:
         user = UserPayments(id=user_id, funds=0)
         db.session.add(user)
-        return insert_payment_method(user_payment_method, user_id), 200
+        return insert_payment_method(user_payment_method, user_id)#, 200
     else:
-        return insert_payment_method(user_payment_method, user_id), 200
+        return insert_payment_method(user_payment_method, user_id)#, 200
 
 
 def insert_payment_method(user_payment_method, user_id):
@@ -99,14 +102,41 @@ def insert_payment_method(user_payment_method, user_id):
                                      valid_month=user_payment_method['method']['valid_month'],
                                      valid_year=user_payment_method['method']['valid_year'],
                                      card_type=user_payment_method['method']['card_type'])
-        db.session.add(payment_method)
+        if not check_if_credit_card_exists(payment_method):                             
+            db.session.add(payment_method)
+        else:
+            return {'message': 'Already exists'}, 409
     elif user_payment_method['type'] == 'paypal':
         payment_method = PayPal(email=user_payment_method['method']['email'], user_id=user_id)
         payment_method.set_password(user_payment_method['method']['password'])
-        db.session.add(payment_method)
+        if not check_if_paypal_exists(user_id, user_payment_method['method']['email'], user_payment_method['method']['password']):
+            db.session.add(payment_method)
+        else:
+            return {'message': 'Already exists'}, 409
+    
     db.session.commit()
 
     return payment_method_to_json(payment_method), 200
+
+
+def check_if_credit_card_exists(payment_method):
+    curr_card_type = CardType.master
+    if payment_method.card_type == "visa":
+        curr_card_type = CardType.visa
+
+    credit_cards = CreditCards.query.filter_by(user_id = payment_method.user_id, cc_number = payment_method.cc_number, cvc = payment_method.cvc, valid_month = payment_method.valid_month, valid_year = payment_method.valid_year, card_type = curr_card_type).count()
+    
+    if credit_cards > 0:
+        return True
+    return False
+
+def check_if_paypal_exists(user_id, email, password):
+    paypals = PayPal.query.filter_by(user_id = user_id)
+
+    for paypal in paypals:
+        if paypal.email == email and paypal.check_password(password):
+            return True
+    return False
 
 
 def find_user_payment_method_by_id(method_id):
@@ -128,60 +158,39 @@ def delete_user_payment_method(method_id):
 
 
 def cart_pay(amount):
-    # jwt_token = connexion.request.headers['Authorization']
-    # TODO decode jwt_token and check if the user is autthorizated
-    # TODO call discounts ms for final amount
-    # decoded_jwt = {'user_id':'123'}
-    # user_id = decoded_jwt['user_id']
-    user_id = 0
-    if pay():
-        transaction = Transaction(date=datetime.now(),
-                                  amount=amount['amount'],
-                                  user=UserPayments.query.filter_by(id=user_id).first(),
-                                  completed=True)
-        db.session.add(transaction)
-        db.session.commit()
-        return transaction_to_json(transaction), 200
-    return {'message': 'pay was not successful'}, 400
+    
+    return pay(amount)
 
 
 def rent_pay(amount):
-    # jwt_token = connexion.request.headers['Authorization']
-    # TODO decode jwt_token and check if the user is autthorizated
-    # TODO call discounts ms for final amount
-    # decoded_jwt = {'user_id': '123'}
-    user_id = 0
-    if pay():
-        transaction = Transaction(date=datetime.now(),
-                                  amount=amount['amount'],
-                                  user=UserPayments.query.filter_by(id=user_id).first(),
-                                  completed=True)
-        db.session.add(transaction)
-        db.session.commit()
-        return transaction_to_json(transaction), 200
-    return {'message': 'pay was not successful'}, 400
+    
+    return pay(amount)
 
 
 def parking_pay(amount):
+    
+    return pay(amount)
+
+
+def pay(amount, jwt):
+
     # jwt_token = connexion.request.headers['Authorization']
-    # TODO decode jwt_token and check if the user is autthorizated
-    # TODO call discounts ms for final amount
-    # decoded_jwt={'user_id': '123'}
-    # user_id=decoded_jwt['user_id']
-    user_id = 0
-    if pay():
-        transaction = Transaction(date=datetime.now(),
-                                  amount=amount['amount'],
-                                  user=UserPayments.query.filter_by(id=user_id).first(),
-                                  completed=True)
-        db.session.add(transaction)
-        db.session.commit()
-        return transaction_to_json(transaction), 200
-    return {'message': 'pay was not successful'}, 400
+    # TODO decode jwt_token and check if the user is authorizated
+    # TODO call discounts MS for final amount
+    
 
+    decoded_jwt={'user_id': '1'}
+    user_id = jwt['user_id']
 
-def pay():
-    return True
+    transaction = Transaction(date=datetime.now(),
+                                amount=amount['amount'],
+                                user=UserPayments.query.filter_by(id=user_id).first(),
+                                completed=True)
+    db.session.add(transaction)
+    db.session.commit()
+    return transaction_to_json(transaction), 200
+    # return {'message': 'pay was not successful'}, 400
+
 
 
 connexion_app = connexion.App(__name__, specification_dir="./config/")

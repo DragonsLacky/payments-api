@@ -65,7 +65,7 @@ paths:
         200:
           description: return status
         409:
-          description: Already exist
+          description: Already exists
   /transactions/user/{user_id}:
     get:
       tags: [ Transaction ]
@@ -151,7 +151,7 @@ paths:
         200:
           description: Return user payment
         409:
-          description: Already exist
+          description: Already exists
         404:
           description: Does not exist
 
@@ -235,8 +235,8 @@ parameters:
           type: number
         completed:
           type: boolean
-        date:
-          type: string
+   #     date:
+   #       type: string
   t_body:
     name: transaction_body
     description: Save new Transaction into database
@@ -256,13 +256,12 @@ parameters:
     description: Save new Payment Methods into database
     in: body
     schema:
-      required:
-        - user_id
+ #     required:
+ #       - user_id
       properties:
         type:
           type: string
-        user_id:
-          type: integer
+  #      user_id:
+  #        type: integer
         method:
           type: object
-
