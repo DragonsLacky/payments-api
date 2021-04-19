@@ -6,3 +6,5 @@ Flask-SQLAlchemy~=2.5.1
 Werkzeug~=1.0.1
 alembic~=1.5.8
 marshmallow-sqlalchemy~=0.24.2
+marshmallow~=3.11.1
+PyJWT~=2.0.1
