@@ -29,7 +29,7 @@ paths:
           description: bad auth
   /pay/cart_pay:
     post:
-      tags: [ Transaction ]
+      tags: [ Payment ]
       operationId: app.cart_pay
       summary: pay from cart exported function
       parameters:
@@ -41,7 +41,7 @@ paths:
           description: bad request
   /pay/rent_pay:
     post:
-      tags: [ Transaction ]
+      tags: [ Payment ]
       operationId: app.rent_pay
       summary: pay for renting product exported function
       parameters:
@@ -53,7 +53,7 @@ paths:
           description: bad request
   /pay/parking_pay:
     post:
-      tags: [ Transaction ]
+      tags: [ Payment ]
       operationId: app.parking_pay
       summary: pay for parking exported function
       parameters:
@@ -196,20 +196,6 @@ paths:
           description: Return deleted User Payment Method
         404:
           description: Does not exist
-  /hello/{name}:
-    post:
-      operationId: app.hello_world
-      summary: Greeting
-      description: Generates a greeting message.
-      responses:
-        200:
-          description: OK
-      parameters:
-          - name: name
-            in: path
-            type: string
-            description: Name of the person to greet.
-            required: true
 parameters:
   user_id:
     name: user_id
