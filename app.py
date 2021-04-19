@@ -1,8 +1,10 @@
 import connexion
+from flask import jsonify
 from flask_migrate import Migrate
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
-from functions import *
+
+
 
 
 def hello_world(name: str) -> str:
@@ -159,24 +161,29 @@ def delete_user_payment_method(method_id):
 
 def cart_pay(amount):
     
-    return pay(amount)
+    # TODO apply discount to amount (call to discount Microservice)
+    discounted_amount = amount
+    return pay(discounted_amount)
 
 
 def rent_pay(amount):
     
-    return pay(amount)
+    # TODO apply discount to amount (call to discount Microservice)
+    discounted_amount = amount
+    return pay(discounted_amount)
 
 
 def parking_pay(amount):
     
-    return pay(amount)
+    # TODO apply discount to amount (call to discount Microservice)
+    discounted_amount = amount
+    return pay(discounted_amount)
 
 
 def pay(amount, jwt):
 
     # jwt_token = connexion.request.headers['Authorization']
     # TODO decode jwt_token and check if the user is authorizated
-    # TODO call discounts MS for final amount
     
 
     decoded_jwt={'user_id': '1'}
@@ -201,8 +208,8 @@ migrate = Migrate(app, db)
 connexion_app.add_api("api.yml")
 
 
-from models import PaymentMethods, UserPayments, Transaction, PayPal, CreditCards, MethodType, CardType
-
+from models import PaymentMethods, UserPayments, Transaction, PayPal, CreditCards, MethodType, CardType#, TransactionSchema, UserPaymentsSchema
+from functions import *
 
 if __name__ == '__main__':
     # pp = PayPal(email="name@gmail.com", user_id=0)
