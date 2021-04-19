@@ -6,9 +6,10 @@ __pycache__/
 
 .idea
 migrations
+app.db
 # C extensions
 *.so
-app.db
+
 
 # Distribution / packaging
 .Python
