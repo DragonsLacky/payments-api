@@ -6,7 +6,6 @@ from flask_migrate import Migrate
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
 import time
-from functions import *
 import jwt
 
 SECRET = 'SECRETSTUFF'
@@ -91,8 +90,6 @@ def save_transaction(transaction_body):
                               completed=transaction_body['completed'])
     db.session.add(transaction)
     db.session.commit()
-
-    return transaction_to_json(transaction), 200
 
 
 def cart_payment_status(transaction_id):
@@ -268,6 +265,7 @@ migrate = Migrate(app, db)
 connexion_app.add_api("api.yml")
 
 from models import PaymentMethods, UserPayments, Transaction, PayPal, CreditCards, MethodType, CardType
+from functions import *
 
 if __name__ == '__main__':
     # pp = PayPal(email="name@gmail.com", user_id=0)
