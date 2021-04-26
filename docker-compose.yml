@@ -1,9 +1,26 @@
 version: '3.9'
 
 services:
+  
+  consul:
+    image: consul
+    container_name: consul
+    ports: 
+      - "8500:8500"
+
   payments-api:
+    build:
+      context: .
     image: payments:0.0.1
     container_name: payments-service
     ports:
       - "5005:5000"
+    
+  discounts:
+    build:
+      context: ../E_Bike_Shop_Discount_Microservice
+    image: discounts:0.0.1
+    container_name: discounts-service
+    ports:
+      - "5006:5000"
     

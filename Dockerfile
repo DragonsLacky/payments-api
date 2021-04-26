@@ -11,4 +11,7 @@ WORKDIR /workdir
 RUN pip install -r requirements.txt
 EXPOSE 5000
 
-ENTRYPOINT ["python", "app.py"]
+
+# CMD export FLASK_APP=app.py ; flask db init ; flask db migrate ; flask db upgrade ; python app.py
+
+CMD python app.py

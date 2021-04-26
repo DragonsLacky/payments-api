@@ -5,8 +5,8 @@ __pycache__/
 .vscode/
 
 .idea
-migrations
-app.db
+# migrations
+# app.db
 # C extensions
 *.so
 

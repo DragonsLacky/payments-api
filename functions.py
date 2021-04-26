@@ -34,3 +34,32 @@ def transactions_to_json_array(transactions):
     for transaction in transactions:
         transactions_json.append(transaction_to_json(transaction))
     return transactions_json
+
+
+def check_if_credit_card_exists(payment_method):
+    from models import CardType, CreditCards
+
+    curr_card_type = CardType.master
+    if payment_method.card_type == "visa":
+        curr_card_type = CardType.visa
+
+    credit_cards = CreditCards.query.filter_by(user_id=payment_method.user_id,
+                                               cc_number=payment_method.cc_number,
+                                               cvc=payment_method.cvc,
+                                               valid_month=payment_method.valid_month,
+                                               valid_year=payment_method.valid_year,
+                                               card_type=curr_card_type).count()
+    if credit_cards > 0:
+        return True
+    return False
+
+
+def check_if_paypal_exists(user_id, email, password):
+    from models import PayPal
+    
+    paypals = PayPal.query.filter_by(user_id=user_id)
+
+    for paypal in paypals:
+        if paypal.email == email and paypal.check_password(password):
+            return True
+    return False

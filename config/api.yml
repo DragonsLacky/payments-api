@@ -15,9 +15,12 @@ securityDefinitions:
     in: header
     x-authentication-scheme: bearer
     x-bearerInfoFunc: app.decode_token
+security:
+ - jwt: []
 paths:
   /auth/auth_microservice:
     post:
+      security: []
       tags: [ Auth ]
       operationId: app.auth_microservice
       parameters:
@@ -26,37 +29,46 @@ paths:
         200:
           description: Jwt token
         401:
-          description: bad auth
-  /pay/cart_pay:
+          description: Bad auth
+  /pay/cart_pay/{user_id}:
     post:
+      security:
+        - jwt: [ 'secret' ]
       tags: [ Payment ]
       operationId: app.cart_pay
       summary: pay from cart exported function
       parameters:
+        - $ref: '#/parameters/user_id'
         - $ref: '#/parameters/amount_body'
       responses:
         200:
           description: return transaction json
         400:
           description: bad request
-  /pay/rent_pay:
+  /pay/rent_pay/{user_id}:
     post:
+      security:
+        - jwt: [ 'secret' ]
       tags: [ Payment ]
       operationId: app.rent_pay
       summary: pay for renting product exported function
       parameters:
+        - $ref: '#/parameters/user_id'
         - $ref: '#/parameters/amount_body'
       responses:
         200:
           description: return transaction json
         400:
           description: bad request
-  /pay/parking_pay:
+  /pay/parking_pay/{user_id}:
     post:
+      security:
+        - jwt: [ 'secret' ]
       tags: [ Payment ]
       operationId: app.parking_pay
       summary: pay for parking exported function
       parameters:
+        - $ref: '#/parameters/user_id'
         - $ref: '#/parameters/amount_body'
       responses:
         200:
@@ -163,8 +175,8 @@ paths:
       operationId: app.save_user_payment_method
       summary: add new payment method for user
       parameters:
-        - $ref: '#/parameters/p_body'
         - $ref: '#/parameters/user_id'
+        - $ref: '#/parameters/p_body'
       responses:
         200:
           description: Return user payment
@@ -219,6 +231,7 @@ parameters:
       properties:
         amount:
           type: number
+          format: double
   method_id:
     name: method_id
     description: Method unique identifier
