@@ -14,6 +14,7 @@ from consul_functions import get_host_name_IP, get_consul_service, register_to_c
 
 
 
+
 SECRET = 'SECRETSTUFF'
 APIKEY = 'PAYMENT_APIKEY'
 
