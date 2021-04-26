@@ -106,8 +106,6 @@ def save_transaction(transaction_body):
     db.session.add(transaction)
     db.session.commit()
 
-    return transaction_to_json(transaction), 200
-
 
 @has_role(['shopping_cart'])
 def cart_payment_status(transaction_id):

@@ -1,4 +1,4 @@
-from models import TransactionSchema, UserPaymentsSchema, PayPalSchema, CreditCardSchema
+from schemas import TransactionSchema, UserPaymentsSchema, PayPalSchema, CreditCardSchema
 
 
 def payment_method_to_json(payment_method):
