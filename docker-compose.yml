@@ -8,7 +8,7 @@ services:
     ports: 
       - "8500:8500"
 
-  payments-api:
+  payments:
     build:
       context: .
     image: payments:0.0.1
@@ -23,4 +23,12 @@ services:
     container_name: discounts-service
     ports:
       - "5006:5000"
+
+  user:
+    build:
+      context: ../soa-user-ms
+    image: user:0.0.1
+    container_name: user-service
+    ports:
+      - 5010:5000
     

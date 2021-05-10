@@ -15,8 +15,8 @@ def get_host_name_IP():
         s.close()
         # print ("Host ip:", host_name_ip)
         return host_name_ip
-    except: 
-        print("Unable to get Hostname") 
+    except Exception as e: 
+        print (e)
 
 
 def register_to_consul():

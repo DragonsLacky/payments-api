@@ -18,18 +18,18 @@ securityDefinitions:
 security:
  - jwt: []
 paths:
-  /auth/auth_microservice:
-    post:
-      security: []
-      tags: [ Auth ]
-      operationId: app.auth_microservice
-      parameters:
-        - $ref: '#/parameters/auth_body_microservice'
-      responses:
-        200:
-          description: Jwt token
-        401:
-          description: Bad auth
+  # /auth/auth_microservice:
+  #   post:
+  #     security: []
+  #     tags: [ Auth ]
+  #     operationId: app.auth_microservice
+  #     parameters:
+  #       - $ref: '#/parameters/auth_body_microservice'
+  #     responses:
+  #       200:
+  #         description: Jwt token
+  #       401:
+  #         description: Invalid API key
   /pay/cart_pay/{user_id}:
     post:
       security:

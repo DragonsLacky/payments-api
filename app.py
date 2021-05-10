@@ -9,16 +9,46 @@ import time
 import jwt
 import requests
 import json
+import time
 
 from consul_functions import get_host_name_IP, get_consul_service, register_to_consul
 
 
 
 
-SECRET = 'SECRETSTUFF'
-APIKEY = 'PAYMENT_APIKEY'
+JWT_SECRET = 'USER MS SECRET'
+PAYMENTS_APIKEY = 'PAYMENTS MS SECRET'
+JWT_LIFETIME_SECONDS = 600000 - 120
+AUTH_HEADER = {}
+TOKEN_CREATION_TIME = time.time() - JWT_LIFETIME_SECONDS - 1
 
 
+def get_jwt_token_from_user_ms():
+    # http://localhost:5010/api/user/auth-microservice
+
+    user_ms_url = get_service_url('user-ms')
+
+    url = "{}/api/user/{}".format(user_ms_url, 'auth-microservice')
+    # url = "{}/api/user/{}".format("http://localhost:5010", 'auth-microservice')
+
+    apikey_json = {"apikey": PAYMENTS_APIKEY}
+
+    user_auth_microservice_response = requests.post(url=url, json=apikey_json)
+
+    return user_auth_microservice_response.json()
+
+
+def update_jwt_token():
+
+    global TOKEN_CREATION_TIME
+    global AUTH_HEADER
+
+    if time.time() - TOKEN_CREATION_TIME > JWT_LIFETIME_SECONDS:
+        print("Updating token")
+        jwt_token = get_jwt_token_from_user_ms()
+        auth_value = "Bearer {}".format(jwt_token)
+        AUTH_HEADER = {"Authorization": auth_value}
+        TOKEN_CREATION_TIME = time.time()
 
 
 def has_role(arg):
@@ -46,7 +76,7 @@ def has_role(arg):
 
 
 def decode_token(token):
-    return jwt.decode(token, SECRET, algorithms='HS256')
+    return jwt.decode(token, JWT_SECRET, algorithms='HS256')
 
 
 @has_role(['payments'])
@@ -214,34 +244,35 @@ def auth_microservice(auth_body_microservice):
         "roles": roles,
         "user_details": user
     }
-    encoded = jwt.encode(payload, SECRET, algorithm="HS256")
+    encoded = jwt.encode(payload, JWT_SECRET, algorithm="HS256")
     return encoded
 
-def get_discounts_url():
+def get_service_url(service_name):
 
-    discounts_address, discounts_port = get_consul_service("discounts")
-    
+    discounts_address, discounts_port = get_consul_service(service_name)
+
     url = "{}:{}".format(discounts_address, discounts_port)
 
     if not url.startswith("http"):
         url = "http://{}".format(url)
     
     return url
+    
 
 def discounts_request(user_id, amount, target_function):
-    discounts_url = get_discounts_url()
+    global AUTH_HEADER
+    discounts_url = get_service_url('discounts')
     url = "{}/api/{}/{}".format(discounts_url, target_function, user_id)
+    # url = "{}/api/{}/{}".format("http://localhost:5006", target_function, user_id)
 
-    headers = request.headers
-    auth_headers = {}
-    if 'Authorization' in headers:
-        auth_headers["Authorization"] = headers['Authorization']
-    
+    update_jwt_token()
+
     amount_data = {"PriceToPay": amount}
     
-    discounts_response = requests.post(url=url, headers = auth_headers, json=amount_data)
+    discounts_response = requests.post(url=url, headers = AUTH_HEADER, json=amount_data)
 
     return discounts_response
+
 
 @has_role(['shopping_cart'])
 def cart_pay(user_id, amount):
